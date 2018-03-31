@@ -12,7 +12,7 @@ namespace Compareitor.Console
         static void Main(string[] args)
         {
             var comparer = new CompareitorGenerator();
-            comparer.PerformanceComparers.Add(new EfCompareitor());
+            comparer.PerformanceComparers.Add(new EfComparer());
             comparer.ExecuteAndGenerateResult();
         }
     }

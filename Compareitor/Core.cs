@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Configuration;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -95,9 +96,29 @@ namespace Compareitor
 
     public abstract class PerformanceComparerBase : IPerformanceComparer
     {
-        public abstract ComparerResult Execute(List<Invoice> invoices, string aditionaleName = null);
-
         public virtual void Setup() { }
+
+        public virtual ComparerResult Execute(List<Invoice> invoices, string aditionaleName = null)
+        {
+            var result = new ComparerResult { Name = CreateName(aditionaleName) };
+            var stopwatch = Stopwatch.StartNew();
+
+            ExecuteWrite(invoices);
+
+            stopwatch.Stop();
+            result.WriteElapsed = stopwatch.Elapsed;
+            stopwatch.Restart();
+
+            ExecuteRead(invoices);
+
+            stopwatch.Stop();
+            result.ReadElapsed = stopwatch.Elapsed;
+            return result;
+        }
+
+        protected abstract void ExecuteRead(List<Invoice> invoices);
+
+        protected abstract void ExecuteWrite(List<Invoice> invoices);
 
         protected string CreateName(string aditionaleName)
         {

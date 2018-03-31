@@ -15,23 +15,20 @@ namespace Compareitor.EntityiFramework
         public DbSet<InvoiceLine> InvoiceLines { get; set; }
     }
 
-    public class EfCompareitor : PerformanceComparerBase, IPerformanceComparer
+    public class EfComparer : PerformanceComparerBase, IPerformanceComparer
     {
-        public override ComparerResult Execute(List<Invoice> invoices, string aditionaleName = null)
+        protected override void ExecuteWrite(List<Invoice> invoices)
         {
-            var result = new ComparerResult { Name = CreateName(aditionaleName) };
-            var stopwatch = Stopwatch.StartNew();
             using (var db = new CompareitorDbContext())
             {
                 db.Configuration.AutoDetectChangesEnabled = false;
                 db.Invoices.AddRange(invoices);
                 db.SaveChanges();
             }
+        }
 
-            stopwatch.Stop();
-            result.WriteElapsed = stopwatch.Elapsed;
-            stopwatch.Restart();
-
+        protected override void ExecuteRead(List<Invoice> invoices)
+        {
             foreach (var invoice in invoices)
             {
                 using (var db = new CompareitorDbContext())
@@ -39,10 +36,6 @@ namespace Compareitor.EntityiFramework
                     var invoiceFromDb = db.Invoices.Include((i) => i.InvoiceLines).SingleOrDefault(i => i.Id == invoice.Id);
                 }
             }
-
-            stopwatch.Stop();
-            result.ReadElapsed = stopwatch.Elapsed;
-            return result;
         }
     }
 }
