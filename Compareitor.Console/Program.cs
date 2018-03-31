@@ -11,7 +11,7 @@ namespace Compareitor.Console
     {
         static void Main(string[] args)
         {
-            var comparer = new CompareitorGenerator();
+            var comparer = new PerformanceComparerApplication();
             comparer.PerformanceComparers.Add(new EfComparer());
             comparer.ExecuteAndGenerateResult();
         }

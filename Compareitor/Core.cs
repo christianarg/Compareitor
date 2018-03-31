@@ -26,7 +26,7 @@ namespace Compareitor
         }
     }
 
-    public class CompareitorGenerator
+    public class PerformanceComparerApplication
     {
         public List<IPerformanceComparer> PerformanceComparers { get; set; } = new List<IPerformanceComparer>();
         public List<Invoice> GenereateInvoices() => InvoiceFactory.GenereateInvoices();
