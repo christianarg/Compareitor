@@ -1,24 +1,41 @@
 ﻿using Compareitor.CommonModel;
 using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace Compareitor
 {
-    public class Constants
+    public class Configuration
     {
-        public const int LoopCount = 10000;
+        public static int LoopCount
+        {
+            get
+            {
+                var setting = ConfigurationManager.AppSettings["LoopCount"];
+                if (!string.IsNullOrEmpty(setting) && int.TryParse(setting, out int loopCount))
+                {
+                    return loopCount;
+                }
+                return 10000;   // default
+            }
+        }
     }
 
     public class CompareitorGenerator
     {
-        public List<Invoice> GenereateInvoices()
+        public List<Invoice> GenereateInvoices() => InvoiceFactory.GenereateInvoices();
+    }
+
+    public class InvoiceFactory
+    {
+        public static List<Invoice> GenereateInvoices()
         {
             var result = new List<Invoice>();
 
-            for (int i = 0; i < Constants.LoopCount; i++)
+            for (int i = 0; i < Configuration.LoopCount; i++)
             {
                 var invoice = new Invoice
                 {
@@ -45,7 +62,20 @@ namespace Compareitor
 
     public interface ICompareitor
     {
-        CompareitorResult Execute(string aditionaleName = null);
+        void Setup();
+        CompareitorResult Execute(List<Invoice> invoices, string aditionaleName = null);
+    }
+
+    public abstract class CompareitorBase : ICompareitor
+    {
+        public abstract CompareitorResult Execute(List<Invoice> invoices, string aditionaleName = null);
+
+        public virtual void Setup() { }
+
+        protected string CreateName(string aditionaleName)
+        {
+            return $"{this.GetType().Name}-{aditionaleName}";
+        }
     }
 
     public class CompareitorResult

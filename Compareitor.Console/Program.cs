@@ -12,15 +12,16 @@ namespace Compareitor.Console
         {
             var invoices = new CompareitorGenerator().GenereateInvoices();
 
-            using (var db = new Compareitor.EntityiFramework.CompareitorDbContext())
-            {
-                //db.Database.Delete();
-                //db.Database.ExecuteSqlCommand("TRUNCATE TABLE INVOICELINES");
-                //db.Database.ExecuteSqlCommand("delete from Invoices");
-                //db.Configuration.AutoDetectChangesEnabled = false;
-                db.Invoices.AddRange(invoices);
-                db.SaveChanges();
-            }
+          
+            //using (var db = new Compareitor.EntityiFramework.CompareitorDbContext())
+            //{
+            //    //db.Database.Delete();
+            //    //db.Database.ExecuteSqlCommand("TRUNCATE TABLE INVOICELINES");
+            //    //db.Database.ExecuteSqlCommand("delete from Invoices");
+            //    db.Configuration.AutoDetectChangesEnabled = false;
+            //    db.Invoices.AddRange(invoices);
+            //    db.SaveChanges();
+            //}
         }
     }
 }

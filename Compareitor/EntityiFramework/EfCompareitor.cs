@@ -14,24 +14,20 @@ namespace Compareitor.EntityiFramework
         public DbSet<InvoiceLine> InvoiceLines { get; set; }
     }
 
-    public class EfCompareitor : ICompareitor
+    public class EfCompareitor : CompareitorBase, ICompareitor
     {
-        public CompareitorResult Execute(string aditionaleName = null)
+        public override CompareitorResult Execute(List<Invoice> invoices, string aditionaleName = null)
         {
-            var result = new CompareitorResult { Name = $"{this.GetType().Name}-{aditionaleName}" };
+            var result = new CompareitorResult { Name = CreateName(aditionaleName) };
 
-            for (int i = 0; i < Constants.LoopCount; i++)
+            using (var db = new CompareitorDbContext())
             {
-                // write
-            }
-
-            for (int i = 0; i < Constants.LoopCount; i++)
-            {
-                // read
+                db.Configuration.AutoDetectChangesEnabled = false;
+                db.Invoices.AddRange(invoices);
+                db.SaveChanges();
             }
 
             return result;
         }
     }
-
 }
