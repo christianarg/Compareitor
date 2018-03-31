@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Configuration;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -26,7 +27,33 @@ namespace Compareitor
 
     public class CompareitorGenerator
     {
+        public List<IPerformanceComparer> PerformanceComparers { get; set; } = new List<IPerformanceComparer>();
         public List<Invoice> GenereateInvoices() => InvoiceFactory.GenereateInvoices();
+
+        public List<ComparerResult> ExecuteAndGenerateResult()
+        {
+            var results = ExecuteComparison();
+            File.WriteAllText("result.csv", $"{nameof(ComparerResult.Name)},{nameof(ComparerResult.WriteElapsed)},{nameof(ComparerResult.ReadElapsed)}{Environment.NewLine}");
+
+            foreach (var result in results)
+            {
+                File.AppendAllText("result.csv", $"{result.Name},{result.WriteElapsed},{result.ReadElapsed}{Environment.NewLine}");
+            }
+            return results;
+        }
+
+        public List<ComparerResult> ExecuteComparison()
+        {
+            var result = new List<ComparerResult>();
+            var invoices = GenereateInvoices();
+            foreach (var comparer in PerformanceComparers)
+            {
+                comparer.Setup();
+                result.Add(comparer.Execute(invoices));
+            }
+
+            return result;
+        }
     }
 
     public class InvoiceFactory
@@ -60,15 +87,15 @@ namespace Compareitor
         }
     }
 
-    public interface ICompareitor
+    public interface IPerformanceComparer
     {
         void Setup();
-        CompareitorResult Execute(List<Invoice> invoices, string aditionaleName = null);
+        ComparerResult Execute(List<Invoice> invoices, string aditionaleName = null);
     }
 
-    public abstract class CompareitorBase : ICompareitor
+    public abstract class PerformanceComparerBase : IPerformanceComparer
     {
-        public abstract CompareitorResult Execute(List<Invoice> invoices, string aditionaleName = null);
+        public abstract ComparerResult Execute(List<Invoice> invoices, string aditionaleName = null);
 
         public virtual void Setup() { }
 
@@ -78,7 +105,7 @@ namespace Compareitor
         }
     }
 
-    public class CompareitorResult
+    public class ComparerResult
     {
         public string Name { get; set; }
         public TimeSpan WriteElapsed { get; set; }

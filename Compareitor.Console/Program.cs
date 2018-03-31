@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Compareitor.EntityiFramework;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -10,18 +11,9 @@ namespace Compareitor.Console
     {
         static void Main(string[] args)
         {
-            var invoices = new CompareitorGenerator().GenereateInvoices();
-
-          
-            //using (var db = new Compareitor.EntityiFramework.CompareitorDbContext())
-            //{
-            //    //db.Database.Delete();
-            //    //db.Database.ExecuteSqlCommand("TRUNCATE TABLE INVOICELINES");
-            //    //db.Database.ExecuteSqlCommand("delete from Invoices");
-            //    db.Configuration.AutoDetectChangesEnabled = false;
-            //    db.Invoices.AddRange(invoices);
-            //    db.SaveChanges();
-            //}
+            var comparer = new CompareitorGenerator();
+            comparer.PerformanceComparers.Add(new EfCompareitor());
+            comparer.ExecuteAndGenerateResult();
         }
     }
 }
