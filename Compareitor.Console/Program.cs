@@ -1,9 +1,6 @@
-﻿using Compareitor.EntityiFramework;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Compareitor.AzureBlobStorage;
+using Compareitor.EntityiFramework;
+using System.Configuration;
 
 namespace Compareitor.Console
 {
@@ -12,7 +9,9 @@ namespace Compareitor.Console
         static void Main(string[] args)
         {
             var comparer = new PerformanceComparerApplication();
-            comparer.PerformanceComparers.Add(new EfComparer());
+            //comparer.PerformanceComparers.Add(new EfComparer());
+            comparer.PerformanceComparers.Add(new BlobStorageComparer());
+
             comparer.ExecuteAndGenerateResult();
         }
     }

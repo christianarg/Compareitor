@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -18,7 +19,7 @@ namespace Compareitor.AzureBlobStorage
 
         public override void Setup()
         {
-            storageAccount = CloudStorageAccount.Parse("blobConnection");
+            storageAccount = CloudStorageAccount.Parse(ConfigurationManager.AppSettings["blobConnection"]);
 
             blobClient = storageAccount.CreateCloudBlobClient();
 

@@ -259,3 +259,5 @@ paket-files/
 # Python Tools for Visual Studio (PTVS)
 __pycache__/
 *.pyc
+/Compareitor.Console/local.connectionStrings.config
+/Compareitor.Console/local.appsettings.config
