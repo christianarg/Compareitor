@@ -34,11 +34,15 @@ namespace Compareitor
         public List<ComparerResult> ExecuteAndGenerateResult()
         {
             var results = ExecuteComparison();
-            File.WriteAllText("result.csv", $"{nameof(ComparerResult.Name)},{nameof(ComparerResult.WriteElapsed)},{nameof(ComparerResult.ReadElapsed)}{Environment.NewLine}");
+            string path = Path.Combine(Environment.CurrentDirectory, "result.csv");
+            if (!File.Exists(path))
+            {
+                File.WriteAllText(path, $"{nameof(ComparerResult.Name)},{nameof(ComparerResult.WriteElapsed)},{nameof(ComparerResult.ReadElapsed)}{Environment.NewLine}");
+            }
 
             foreach (var result in results)
             {
-                File.AppendAllText("result.csv", $"{result.Name},{result.WriteElapsed},{result.ReadElapsed}{Environment.NewLine}");
+                File.AppendAllText(path, $"{result.Name},{result.WriteElapsed},{result.ReadElapsed}{Environment.NewLine}");
             }
             return results;
         }
@@ -122,7 +126,12 @@ namespace Compareitor
 
         protected string CreateName(string aditionaleName)
         {
-            return $"{this.GetType().Name}-{aditionaleName}";
+            string name = $"{this.GetType().Name}";
+            if (!string.IsNullOrEmpty(aditionaleName))
+            {
+                return $"{name}-{aditionaleName}";
+            }
+            return name;
         }
     }
 

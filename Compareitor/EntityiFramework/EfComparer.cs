@@ -1,11 +1,7 @@
 ﻿using Compareitor.CommonModel;
-using System;
 using System.Collections.Generic;
 using System.Data.Entity;
-using System.Diagnostics;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Compareitor.EntityiFramework
 {
@@ -17,6 +13,15 @@ namespace Compareitor.EntityiFramework
 
     public class EfComparer : PerformanceComparerBase, IPerformanceComparer
     {
+        public override void Setup()
+        {
+            using (var db = new CompareitorDbContext())
+            {
+                db.Database.ExecuteSqlCommand("DELETE FROM InvoiceLines");
+                db.Database.ExecuteSqlCommand("DELETE FROM Invoices");
+            }
+        }
+
         protected override void ExecuteWrite(List<Invoice> invoices)
         {
             using (var db = new CompareitorDbContext())
@@ -34,6 +39,88 @@ namespace Compareitor.EntityiFramework
                 using (var db = new CompareitorDbContext())
                 {
                     var invoiceFromDb = db.Invoices.Include((i) => i.InvoiceLines).SingleOrDefault(i => i.Id == invoice.Id);
+                }
+            }
+        }
+    }
+
+    public class EfComparerForeachWriteOneContext : EfComparer
+    {
+        protected override void ExecuteWrite(List<Invoice> invoices)
+        {
+            using (var db = new CompareitorDbContext())
+            {
+                db.Configuration.AutoDetectChangesEnabled = false;
+
+                foreach (var invoice in invoices)
+                {
+
+                    db.Invoices.Add(invoice);
+                    db.SaveChanges();
+                }
+            }
+        }
+    }
+
+    public class EfComparerForeachWriteOneContextWithAutoDetectChanges : EfComparer
+    {
+        protected override void ExecuteWrite(List<Invoice> invoices)
+        {
+            using (var db = new CompareitorDbContext())
+            {
+                foreach (var invoice in invoices)
+                {
+
+                    db.Invoices.Add(invoice);
+                    db.SaveChanges();
+                }
+            }
+        }
+    }
+
+    public class EfComparerForeachWriteOneContextOneSaveChanges : EfComparer
+    {
+        protected override void ExecuteWrite(List<Invoice> invoices)
+        {
+            using (var db = new CompareitorDbContext())
+            {
+                db.Configuration.AutoDetectChangesEnabled = false;
+
+                foreach (var invoice in invoices)
+                {
+                    db.Invoices.Add(invoice);
+                }
+                db.SaveChanges();
+            }
+        }
+    }
+
+    public class EfComparerForeachWrite : EfComparer
+    {
+        protected override void ExecuteWrite(List<Invoice> invoices)
+        {
+            foreach (var invoice in invoices)
+            {
+                using (var db = new CompareitorDbContext())
+                {
+                    db.Configuration.AutoDetectChangesEnabled = false;
+                    db.Invoices.Add(invoice);
+                    db.SaveChanges();
+                }
+            }
+        }
+    }
+
+    public class EfComparerForeachWriteAutoDetectChangedTrue : EfComparer
+    {
+        protected override void ExecuteWrite(List<Invoice> invoices)
+        {
+            foreach (var invoice in invoices)
+            {
+                using (var db = new CompareitorDbContext())
+                {
+                    db.Invoices.Add(invoice);
+                    db.SaveChanges();
                 }
             }
         }

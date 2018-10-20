@@ -10,7 +10,15 @@ namespace Compareitor.Console
         {
             var comparer = new PerformanceComparerApplication();
             //comparer.PerformanceComparers.Add(new EfComparer());
-            comparer.PerformanceComparers.Add(new BlobStorageComparer());
+            //comparer.PerformanceComparers.Add(new EfComparerForeachWriteOneContext());
+            comparer.PerformanceComparers.Add(new EfComparerForeachWriteOneContextWithAutoDetectChanges());
+            
+            //comparer.PerformanceComparers.Add(new EfComparerForeachWrite());
+            //comparer.PerformanceComparers.Add(new EfComparerForeachWriteAutoDetectChangedTrue());
+            //comparer.PerformanceComparers.Add(new EfComparerForeachWriteOneContextOneSaveChanges());
+
+            
+            //comparer.PerformanceComparers.Add(new BlobStorageComparer());
 
             comparer.ExecuteAndGenerateResult();
         }
