@@ -17,7 +17,7 @@ namespace Compareitor.AzureBlobStorage
         CloudBlobClient blobClient;
         CloudBlobContainer container;
 
-        public override void Setup()
+        public override void Setup(List<Invoice> invoices)
         {
             storageAccount = CloudStorageAccount.Parse(ConfigurationManager.AppSettings["blobConnection"]);
 

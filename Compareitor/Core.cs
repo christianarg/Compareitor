@@ -53,7 +53,7 @@ namespace Compareitor
             var invoices = GenereateInvoices();
             foreach (var comparer in PerformanceComparers)
             {
-                comparer.Setup();
+                comparer.Setup(invoices);
                 result.Add(comparer.Execute(invoices));
             }
 
@@ -94,13 +94,13 @@ namespace Compareitor
 
     public interface IPerformanceComparer
     {
-        void Setup();
+        void Setup(List<Invoice> invoices);
         ComparerResult Execute(List<Invoice> invoices, string aditionaleName = null);
     }
 
     public abstract class PerformanceComparerBase : IPerformanceComparer
     {
-        public virtual void Setup() { }
+        public virtual void Setup(List<Invoice> invoices) { }
 
         public virtual ComparerResult Execute(List<Invoice> invoices, string aditionaleName = null)
         {
